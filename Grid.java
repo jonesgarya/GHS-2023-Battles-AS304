@@ -8,6 +8,10 @@ public class Grid
     public static final int UNGUESSED = 0;
     public static final int HIT = 1;
     public static final int MISSED = 2;
+    
+    public static final int UNSET = -1;
+    public static final int HORIZONTAL = 0;
+    public static final int VERTICAL = 1;
     // Create a new Grid. Initialize each Location in the grid
     // to be a new Location object.
     public Grid()
@@ -149,6 +153,27 @@ public class Grid
                 }
             }
         }
-        
+    }
+    /**
+     * This method can be called on your own grid. To add a ship
+     * we will go to the ships location and mark a true value
+     * in every location that the ship takes up.
+     */
+    public void addShip(Ship s)
+    {
+        if(s.getDirection() == VERTICAL)
+        {
+            for(int i = 0; i < s.getLength();i++)
+            {
+                setShip(s.getRow()-i,s.getCol(), true);
+            }
+        }
+        else if(s.getDirection() == HORIZONTAL)
+        {
+            for(int i = 0; i < s.getLength();i++)
+            {
+                setShip(s.getRow(),s.getCol()+i, true);
+            }
+        }
     }
 }
