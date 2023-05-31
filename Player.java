@@ -7,15 +7,25 @@ public class Player extends ConsoleProgram
     public static final int VERTICAL = 1;
     
     public Grid playerGrid = new Grid();
-    public Grid computerGrid = new Grid();
     
-    public void placeShips(Grid grid, int length, int direction, int row, int col)
+    
+    public int hitAmount()
+    {
+        int hitsNeeded = 0;
+        for(int i=0; i< SHIP_LENGTHS.length; i++)
+        {
+            hitsNeeded += SHIP_LENGTHS[i];
+        }
+        return hitsNeeded;
+    }
+    
+    public void placeShips(int length, int direction, int row, int col)
     {
         Ship s = new Ship(length);
         s.setDirection(direction);
         s.setLocation(row, col);
         
-        grid.addShip(s);
+        playerGrid.addShip(s);
     }
 
     public void askPlayer()
@@ -52,10 +62,10 @@ public class Player extends ConsoleProgram
                 directionToInt = HORIZONTAL;
             }
             
-            boolean check = checkIfShip(playerGrid, SHIP_LENGTHS[i],directionToInt,letter,numToInt);
+            boolean check = checkIfShip(SHIP_LENGTHS[i],directionToInt,letter,numToInt);
             if(check)
             {
-                placeShips(playerGrid, SHIP_LENGTHS[i],directionToInt,letter+1,numToInt+1);
+                placeShips(SHIP_LENGTHS[i],directionToInt,letter+1,numToInt+1);
                 playerGrid.printShips();
             }
             else
@@ -63,21 +73,21 @@ public class Player extends ConsoleProgram
                 i--;
             }
         }
-        computer();
+        System.out.println("\033[2J");
     }
     
     public void computer()
     {
         for(int i = 0; i < SHIP_LENGTHS.length; i++)
         {
-            int computerRow = Randomizer.nextInt(0,computerGrid.numRows()-1);
-            int computerCol = Randomizer.nextInt(0,computerGrid.numCols()-1);
+            int computerRow = Randomizer.nextInt(0,playerGrid.numRows()-1);
+            int computerCol = Randomizer.nextInt(0,playerGrid.numCols()-1);
             int computerDirect = Randomizer.nextInt(0,1);
             
-            boolean check = checkIfShip(computerGrid, SHIP_LENGTHS[i],computerDirect,computerRow,computerCol);
+            boolean check = checkIfShip(SHIP_LENGTHS[i],computerDirect,computerRow,computerCol);
             if(check)
             {
-                placeShips(computerGrid, SHIP_LENGTHS[i],computerDirect,computerRow+1,computerCol+1);
+                placeShips(SHIP_LENGTHS[i],computerDirect,computerRow+1,computerCol+1);
             }
             else
             {
@@ -86,9 +96,9 @@ public class Player extends ConsoleProgram
         }
     }
     
-    public boolean checkIfShip(Grid grid, int length, int direction, int row, int col)
+    public boolean checkIfShip(int length, int direction, int row, int col)
     {
-        if(row < 0 || row > grid.numRows() || col < 0 || col > grid.numCols())
+        if(row < 0 || row > playerGrid.numRows()-1 || col < 0 || col > playerGrid.numCols()-1)
         {
             return false;
         }
@@ -100,7 +110,7 @@ public class Player extends ConsoleProgram
             }
             for(int i = 0; i < length ;i++)
             {
-                if(grid.hasShip(row-i, col))
+                if(playerGrid.hasShip(row-i, col))
                 {
                     return false;
                 }
@@ -109,13 +119,13 @@ public class Player extends ConsoleProgram
         } 
         else if(direction == HORIZONTAL)
         {
-            if(col > (grid.numCols()-length))
+            if(col > (playerGrid.numCols()-length))
             {
                 return false;
             }
             for(int i = 0; i < length;i++)
             {
-                if(grid.hasShip(row,col+i))
+                if(playerGrid.hasShip(row,col+i))
                 {
                     return false;
                 }
@@ -123,5 +133,77 @@ public class Player extends ConsoleProgram
             return true;
         }
         return false;
+    }
+    
+    public void printStatus()
+    {
+        playerGrid.printStatus();
+    }
+    
+    public boolean playerTurn(Grid otherPlayer)
+    {
+        boolean check = true;
+        int letter = UNSET;
+        int numToInt= UNSET;
+        while(check)
+        {
+            String guessLocation = "";
+            System.out.println("");
+            while(guessLocation.length()<2 || !Character.isDigit(guessLocation.charAt(1)) || !Character.isLetter(guessLocation.charAt(0)))
+            {
+                guessLocation = readLine("Where do you want to guess? write as (A-" +  (char)(playerGrid.numRows()+64) + ")(1-" + playerGrid.numCols() + ")");
+            }
+            numToInt= ((int)guessLocation.charAt(1))-49;
+            if(guessLocation.length() == 3)
+            {
+                if(guessLocation.charAt(1) == '1' && guessLocation.charAt(2) == '0')
+                {
+                    numToInt = 9;
+                }
+            }
+            char letterToCap = Character.toUpperCase(guessLocation.charAt(0));
+            letter = ((int)letterToCap)-65;
+            if(letter < 0 || letter > otherPlayer.numRows()-1 || numToInt < 0 || numToInt > otherPlayer.numCols()-1)
+            {
+            }
+            else
+            {
+                check = otherPlayer.alreadyGuessed(letter, numToInt);
+            }
+        }
+        return adjustStatus(otherPlayer, letter, numToInt);
+    }
+    
+    public boolean computerTurn(Grid otherPlayer)
+    {
+        boolean check = true;
+        int computerRow = UNSET;
+        int computerCol = UNSET;
+        while(check)
+        {
+            computerRow = Randomizer.nextInt(0,playerGrid.numRows()-1);
+            computerCol = Randomizer.nextInt(0,playerGrid.numCols()-1);
+            check = otherPlayer.alreadyGuessed(computerRow, computerCol);
+        }
+        return adjustStatus(otherPlayer, computerRow, computerCol);
+    }
+    
+    public boolean adjustStatus(Grid otherPlayer, int row, int col)
+    {
+            if(otherPlayer.hasShip(row, col))
+            {
+                otherPlayer.markHit(row, col);
+                return true;
+            }
+            else
+            {
+                otherPlayer.markMiss(row, col);
+                return false;
+            }
+    }
+    
+    public Grid getGrid()
+    {
+        return playerGrid;
     }
 }
