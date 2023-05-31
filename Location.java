@@ -4,13 +4,13 @@ public class Location
     public static final int HIT = 1;
     public static final int MISSED = 2;
 
-    private boolean ship;
+    private boolean ship = false;
     private int status;
     // Location constructor. 
     public Location()
     {
+        
         status = UNGUESSED;
-        ship = false;
     }
     
     // Was this Location a hit?
@@ -20,10 +20,7 @@ public class Location
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
     
     // Was this location a miss?
@@ -33,10 +30,7 @@ public class Location
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
     
     // Was this location unguessed?
@@ -46,10 +40,7 @@ public class Location
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
     
     // Mark this location a hit.
@@ -71,10 +62,7 @@ public class Location
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
     
     // Set the value of whether this location has a ship.
