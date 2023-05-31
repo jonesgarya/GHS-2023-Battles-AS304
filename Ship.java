@@ -1,12 +1,14 @@
- // Direction constants
+public class Ship
+{
+    // Direction constants
     public static final int UNSET = -1;
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
     
-    private int row = UNSET;
-    private int col = UNSET;
-    private int length = UNSET;
-    private int direction = UNSET;
+    private static int row = UNSET;
+    private static int col = UNSET;
+    private static int length = UNSET;
+    private static int direction = UNSET;
     // Constructor. Create a ship and set the length.
     public Ship(int length)
     {
@@ -100,3 +102,4 @@
         return  rowLetter + col + " " + directionToString();
         }
     }
+}
