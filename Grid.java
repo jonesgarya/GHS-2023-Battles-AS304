@@ -94,7 +94,7 @@ public class Grid
         {
             colAlph.add((char)(i+65));
         }
-        System.out.print(" ");
+        System.out.print("  ");
         for(int col = 1; col <= NUM_COLS; col++)
         {
             System.out.print(" " + col);
