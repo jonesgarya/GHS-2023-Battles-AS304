@@ -5,10 +5,10 @@ public class Ship
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
     
-    private static int row = UNSET;
-    private static int col = UNSET;
-    private static int length = UNSET;
-    private static int direction = UNSET;
+    private int row = UNSET;
+    private int col = UNSET;
+    private int length = UNSET;
+    private int direction = UNSET;
     // Constructor. Create a ship and set the length.
     public Ship(int length)
     {
@@ -41,7 +41,7 @@ public class Ship
     // Set the location of the ship 
     public void setLocation(int row, int col)
     {
-        this.row = row;
+        this.row = row-1;
         this.col = col;
     }
     // Set the direction of the ship
@@ -57,7 +57,7 @@ public class Ship
     // Getter for the column value
     public int getCol()
     {
-        return col;
+        return col-1;
     }
     // Getter for the length of the ship
     public int getLength()
