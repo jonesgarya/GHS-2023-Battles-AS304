@@ -161,6 +161,7 @@ public class Grid
      */
     public void addShip(Ship s)
     {
+        
         if(s.getDirection() == VERTICAL)
         {
             for(int i = 0; i < s.getLength();i++)
